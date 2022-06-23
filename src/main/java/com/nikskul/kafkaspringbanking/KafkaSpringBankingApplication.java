@@ -1,5 +1,6 @@
 package com.nikskul.kafkaspringbanking;
 
+import com.nikskul.kafkaspringbanking.request.DepositRequest;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,10 +15,10 @@ public class KafkaSpringBankingApplication {
     }
 
     @Bean
-    CommandLineRunner commandLineRunner(KafkaTemplate<String, String> kafkaTemplate) {
+    CommandLineRunner commandLineRunner(KafkaTemplate<String, DepositRequest> kafkaTemplate) {
         return args -> {
-            for (int i = 0; i < 100; i++) {
-                kafkaTemplate.send("balance-change-event", "My " + (i+1) + " test event.");
+            for (int i = 0; i < 5; i++) {
+                kafkaTemplate.send("balance-change-event", new DepositRequest("Ivan", 10*(i+1)));
             }
         };
     }
