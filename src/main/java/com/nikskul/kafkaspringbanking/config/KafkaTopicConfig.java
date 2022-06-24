@@ -19,7 +19,7 @@ public class KafkaTopicConfig {
 
     @Bean
     public NewTopic compactClientTopic(
-            @Value("${topics.client}") String clientTopic
+            @Value("${topics.clients}") String clientTopic
     ) {
         return TopicBuilder.name(clientTopic)
                 .compact()

@@ -1,5 +1,6 @@
 package com.nikskul.kafkaspringbanking;
 
+import com.nikskul.kafkaspringbanking.model.BankClient;
 import com.nikskul.kafkaspringbanking.request.DepositRequest;
 import com.nikskul.kafkaspringbanking.service.CalculateBalanceService;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -17,10 +18,19 @@ public class KafkaListeners {
     @KafkaListener(
             topics = "${topics.balance}",
             groupId = "clients",
-            containerFactory = "factory"
+            containerFactory = "depositContainerFactory"
     )
     void depositListener(DepositRequest request) {
         System.out.println("Listener received:\n " + request);
         calculateBalanceService.calculate();
+    }
+
+    @KafkaListener(
+            topics = "${topics.clients}",
+            groupId = "clients",
+            containerFactory = "bankClientListenerContainerFactory"
+    )
+    void clientListener(BankClient request) {
+        System.out.println("Listener received:\n " + request);
     }
 }

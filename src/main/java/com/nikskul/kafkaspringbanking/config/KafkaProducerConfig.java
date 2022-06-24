@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import java.util.HashMap;
@@ -21,6 +22,15 @@ public class KafkaProducerConfig {
 
     @Bean
     public ProducerFactory<String, DepositRequest> depositProducerFactory() {
+        return properties();
+    }
+
+    @Bean
+    public <V> ProducerFactory<String, V> generalizedProducerFactory() {
+        return properties();
+    }
+
+    private <V> ProducerFactory<String, V> properties() {
         HashMap<String, Object> props = new HashMap<>();
 
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
@@ -28,6 +38,13 @@ public class KafkaProducerConfig {
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 
         return new DefaultKafkaProducerFactory<>(props);
+    }
+
+    @Bean
+    public <V> KafkaTemplate<String, V> generalizedKafkaTemplate(
+            ProducerFactory<String, V> generalizedProducerFactory
+    ) {
+        return new KafkaTemplate<>(generalizedProducerFactory);
     }
 
     @Bean
@@ -49,7 +66,7 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, String> kafkaStringTemplate(
+    public KafkaTemplate<String, String> stringKafkaTemplate(
             ProducerFactory<String, String> stringProducerFactory
     ) {
         return new KafkaTemplate<>(stringProducerFactory);

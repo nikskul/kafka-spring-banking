@@ -18,15 +18,19 @@ public class KafkaSpringBankingApplication {
     }
 
     @Bean
-    CommandLineRunner commandLineRunner(KafkaTemplate<String, DepositRequest> kafkaTemplate) {
+    CommandLineRunner commandLineRunner(KafkaTemplate<String, BankClient> kafkaTemplate) {
 
         return args -> {
             for (int i = 0; i < 5; i++) {
-                Integer deposit = 10 * (i+1);
+                String key = UUID.randomUUID().toString();
                 kafkaTemplate.send(
-                        "balance-change-event",
-                        new DepositRequest(
-                                deposit
+                        "clients",
+                        key,
+                        new BankClient(
+                                UUID.fromString(key),
+                                "Ivan",
+                                "Ivanovich",
+                                "Ivanov"
                         )
                 );
             }

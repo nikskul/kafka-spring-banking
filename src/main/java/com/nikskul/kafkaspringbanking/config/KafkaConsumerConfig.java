@@ -1,5 +1,6 @@
 package com.nikskul.kafkaspringbanking.config;
 
+import com.nikskul.kafkaspringbanking.model.BankClient;
 import com.nikskul.kafkaspringbanking.request.DepositRequest;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -20,7 +21,7 @@ public class KafkaConsumerConfig {
     private String bootstrapServer;
 
     @Bean
-    public ConsumerFactory<String, DepositRequest> consumerFactory() {
+    public ConsumerFactory<String, DepositRequest> depositConsumerFactory() {
 
         HashMap<String, Object> props = new HashMap<>();
 
@@ -36,10 +37,35 @@ public class KafkaConsumerConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, DepositRequest> factory(
+    public ConsumerFactory<String, BankClient> bankClientConsumerFactory() {
+
+        HashMap<String, Object> props = new HashMap<>();
+
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        return new DefaultKafkaConsumerFactory<>(
+                props,
+                new StringDeserializer(),
+                new JsonDeserializer<>(BankClient.class)
+        );
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, DepositRequest> depositContainerFactory(
             ConsumerFactory<String, DepositRequest> consumerFactory
     ) {
         ConcurrentKafkaListenerContainerFactory<String, DepositRequest> factory
+                = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory);
+        return factory;
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, BankClient> bankClientListenerContainerFactory(
+            ConsumerFactory<String, BankClient> consumerFactory
+    ) {
+        ConcurrentKafkaListenerContainerFactory<String, BankClient> factory
                 = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
         return factory;

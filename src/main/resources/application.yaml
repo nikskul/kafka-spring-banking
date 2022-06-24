@@ -4,4 +4,4 @@ spring:
 
 topics:
   balance: balance-change-event
-  client: clients
+  clients: clients
