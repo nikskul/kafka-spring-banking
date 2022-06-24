@@ -1,30 +1,32 @@
 package com.nikskul.kafkaspringbanking.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.nikskul.kafkaspringbanking.model.BankClient;
+import lombok.Data;
+
+@Data
 public class DepositRequest {
-    private String name;
-    private int value;
 
-    public DepositRequest() {
-    }
+//    @JsonProperty("receiver")
+//    private final BankClient receiver;
 
-    public DepositRequest(String name, int value) {
-        this.name = name;
-        this.value = value;
-    }
+    @JsonProperty("deposit")
+    private final Integer deposit;
 
-    public String getName() {
-        return name;
-    }
+    @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+    public DepositRequest(
+//            @JsonProperty("receiver") final BankClient receiver,
+            @JsonProperty("deposit") final Integer deposit
+    ) {
+//        if (client == null) {
+//            throw new IllegalArgumentException("Client was null.");
+//        }
+//
+//        if (deposit < 0)
+//            throw new IllegalArgumentException("Deposit value must be more than 0.");
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
+//        this.receiver = receiver;
+        this.deposit = deposit;
     }
 }
