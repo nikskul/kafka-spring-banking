@@ -1,7 +1,7 @@
 package com.nikskul.kafkaspringbanking;
 
-import com.nikskul.kafkaspringbanking.model.BankClient;
 import com.nikskul.kafkaspringbanking.request.DepositRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,20 +18,19 @@ public class KafkaSpringBankingApplication {
     }
 
     @Bean
-    CommandLineRunner commandLineRunner(KafkaTemplate<String, BankClient> kafkaTemplate) {
+    CommandLineRunner autoRunnableExample(
+            KafkaTemplate<String, DepositRequest> kafkaTemplate,
+            @Value("${topics.balance}") String topic
+    ) {
 
         return args -> {
             for (int i = 0; i < 5; i++) {
-                String key = UUID.randomUUID().toString();
+                String key = "Ivan";
+                Integer data = i * 10;
                 kafkaTemplate.send(
-                        "clients",
+                        topic,
                         key,
-                        new BankClient(
-                                UUID.fromString(key),
-                                "Ivan",
-                                "Ivanovich",
-                                "Ivanov"
-                        )
+                        new DepositRequest(key, data)
                 );
             }
         };

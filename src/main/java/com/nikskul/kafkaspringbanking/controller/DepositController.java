@@ -28,7 +28,7 @@ public class DepositController {
 
     @PostMapping
     public void makeDeposit(@RequestBody final DepositRequest request) {
-//        String key = request.getReceiver().getClientId().toString();
-        kafkaTemplate.send(TOPIC, UUID.randomUUID().toString(), request);
+        String key = request.name();
+        kafkaTemplate.send(TOPIC, key, request);
     }
 }
