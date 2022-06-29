@@ -1,8 +1,6 @@
 package com.nikskul.kafkaspringbanking.controller;
 
 import com.nikskul.kafkaspringbanking.request.OperationRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -13,15 +11,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("api/v1/deposits")
-public class DepositController {
+@RequestMapping("api/v1/withdrawals")
+public class WithdrawalController {
 
     private final String topic;
 
     private final KafkaTemplate<String, OperationRequest> kafkaTemplate;
 
-    public DepositController(
-            @Value("${topics.deposit}") String topic,
+    public WithdrawalController(
+            @Value("${topics.withdrawal}") String topic,
             KafkaTemplate<String, OperationRequest> kafkaTemplate
     ) {
         this.topic = topic;
@@ -29,7 +27,7 @@ public class DepositController {
     }
 
     @PostMapping
-    public void makeDeposit(@RequestBody final OperationRequest request) {
+    public void makeWithdrawal(@RequestBody final OperationRequest request) {
         String key = request.getClientName();
 
         ListenableFuture<SendResult<String, OperationRequest>> future
