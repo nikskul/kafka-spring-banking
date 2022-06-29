@@ -29,12 +29,6 @@ public class WithdrawalController {
     @PostMapping
     public void makeWithdrawal(@RequestBody final OperationRequest request) {
         String key = request.getClientName();
-
-        ListenableFuture<SendResult<String, OperationRequest>> future
-                = kafkaTemplate.send(topic, key, request);
-
-        future.addCallback(System.out::println, System.err::println);
-
-        kafkaTemplate.flush();
+        kafkaTemplate.send(topic, key, request);
     }
 }
