@@ -10,10 +10,18 @@ import org.springframework.kafka.config.TopicBuilder;
 public class KafkaTopicConfig {
 
     @Bean
-    public NewTopic balanceChangeEventTopic(
-            @Value("${topics.balance}") String balanceEventTopic
+    public NewTopic depositsTopic(
+            @Value("${topics.deposit}") String depositsTopic
     ) {
-        return TopicBuilder.name(balanceEventTopic)
+        return TopicBuilder.name(depositsTopic)
+                .build();
+    }
+
+    @Bean
+    public NewTopic withdrawalsTopic(
+            @Value("${topics.withdrawal}") String withdrawalsTopic
+    ) {
+        return TopicBuilder.name(withdrawalsTopic)
                 .build();
     }
 

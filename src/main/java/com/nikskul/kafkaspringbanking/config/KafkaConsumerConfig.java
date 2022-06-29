@@ -1,6 +1,6 @@
 package com.nikskul.kafkaspringbanking.config;
 
-import com.nikskul.kafkaspringbanking.request.DepositRequest;
+import com.nikskul.kafkaspringbanking.request.OperationRequest;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +12,7 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 public class KafkaConsumerConfig {
@@ -20,29 +21,54 @@ public class KafkaConsumerConfig {
     private String bootstrapServer;
 
     @Bean
-    public ConsumerFactory<String, DepositRequest> depositConsumerFactory() {
+    public ConcurrentKafkaListenerContainerFactory<String, String> defaultContainerFactory(
+            ConsumerFactory<String, String> depositConsumerFactory
+    ) {
+        ConcurrentKafkaListenerContainerFactory<String, String> factory
+                = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(depositConsumerFactory);
+        return factory;
+    }
 
-        HashMap<String, Object> props = new HashMap<>();
+    @Bean
+    public ConsumerFactory<String, String> defaultConsumerFactory() {
+        Map<String, Object> properties = properties();
+
+        return new DefaultKafkaConsumerFactory<>(
+                properties,
+                new StringDeserializer(),
+                new StringDeserializer()
+        );
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, OperationRequest> clientRequestContainerFactory(
+            ConsumerFactory<String, OperationRequest> operationConsumerFactory
+    ) {
+        ConcurrentKafkaListenerContainerFactory<String, OperationRequest> factory
+                = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(operationConsumerFactory);
+        return factory;
+    }
+
+    @Bean
+    public ConsumerFactory<String, OperationRequest> operationConsumerFactory() {
+        Map<String, Object> properties = properties();
+
+        return new DefaultKafkaConsumerFactory<>(
+                properties,
+                new StringDeserializer(),
+                new JsonDeserializer<>(OperationRequest.class)
+        );
+    }
+
+    private Map<String, Object> properties() {
+        Map<String, Object> props = new HashMap<>();
 
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
 
-        return new DefaultKafkaConsumerFactory<>(
-                props,
-                new StringDeserializer(),
-                new JsonDeserializer<>(DepositRequest.class)
-        );
+        return props;
     }
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, DepositRequest> depositContainerFactory(
-            ConsumerFactory<String, DepositRequest> consumerFactory
-    ) {
-        ConcurrentKafkaListenerContainerFactory<String, DepositRequest> factory
-                = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory);
-        return factory;
-    }
-
 }
