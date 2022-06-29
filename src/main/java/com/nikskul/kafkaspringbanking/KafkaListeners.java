@@ -1,26 +1,28 @@
 package com.nikskul.kafkaspringbanking;
 
-import com.nikskul.kafkaspringbanking.request.DepositRequest;
-import com.nikskul.kafkaspringbanking.service.CalculateBalanceService;
+import com.nikskul.kafkaspringbanking.request.OperationRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 @Component
+@KafkaListener(
+        topics = {
+                "${topics.deposit}",
+                "${topics.withdrawal}"
+        },
+        groupId = "logger",
+        containerFactory = "clientRequestContainerFactory"
+)
 public class KafkaListeners {
 
-    private final CalculateBalanceService calculateBalanceService;
+    private final Logger log = LoggerFactory.getLogger(KafkaListeners.class);
 
-    public KafkaListeners(CalculateBalanceService calculateBalanceService) {
-        this.calculateBalanceService = calculateBalanceService;
+    @KafkaHandler
+    void balanceChangeEventListener(OperationRequest request) {
+        log.info("Listener received: " + request);
     }
 
-    @KafkaListener(
-            topics = "${topics.balance}",
-            groupId = "clients",
-            containerFactory = "depositContainerFactory"
-    )
-    void depositListener(DepositRequest request) {
-        System.out.println("Listener received:\n " + request);
-        calculateBalanceService.calculate();
-    }
 }
