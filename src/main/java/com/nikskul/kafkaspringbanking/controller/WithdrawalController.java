@@ -26,7 +26,7 @@ public class WithdrawalController {
 
     @PostMapping
     public void makeWithdrawal(@RequestBody final OperationRequest request) {
-        String key = request.getClientName();
+        String key = request.getUsername();
         kafkaTemplate.send(topic, key, request);
     }
 }

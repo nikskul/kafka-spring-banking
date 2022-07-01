@@ -30,7 +30,7 @@ public class DepositController {
 
     @PostMapping
     public void makeDeposit(@RequestBody final OperationRequest request) {
-        String key = request.getClientName();
+        String key = request.getUsername();
         kafkaTemplate.send(topic, key, request);
     }
 }

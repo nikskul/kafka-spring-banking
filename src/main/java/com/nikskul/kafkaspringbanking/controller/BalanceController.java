@@ -1,11 +1,9 @@
 package com.nikskul.kafkaspringbanking.controller;
 
+import com.nikskul.kafkaspringbanking.request.CredentialRequest;
 import com.nikskul.kafkaspringbanking.service.CalculateBalanceService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -20,10 +18,11 @@ public class BalanceController {
         this.calculateBalanceService = calculateBalanceService;
     }
 
-    @GetMapping("{name}")
-    public ResponseEntity<BigDecimal> getBalance(@PathVariable("name") String clientName) {
+    @GetMapping
+    public ResponseEntity<BigDecimal> getBalance(@RequestBody final CredentialRequest request) {
 
-        Optional<BigDecimal> balanceOptional = calculateBalanceService.getBalance(clientName);
+        Optional<BigDecimal> balanceOptional
+                = calculateBalanceService.getBalance(request.username(), request.password());
 
         return balanceOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
