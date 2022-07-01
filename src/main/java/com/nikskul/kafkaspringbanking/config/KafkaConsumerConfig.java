@@ -1,5 +1,6 @@
 package com.nikskul.kafkaspringbanking.config;
 
+import com.nikskul.kafkaspringbanking.model.BankClient;
 import com.nikskul.kafkaspringbanking.request.OperationRequest;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -42,7 +43,7 @@ public class KafkaConsumerConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, OperationRequest> clientRequestContainerFactory(
+    public ConcurrentKafkaListenerContainerFactory<String, OperationRequest> clientOperationContainerFactory(
             ConsumerFactory<String, OperationRequest> operationConsumerFactory
     ) {
         ConcurrentKafkaListenerContainerFactory<String, OperationRequest> factory
@@ -59,6 +60,27 @@ public class KafkaConsumerConfig {
                 properties,
                 new StringDeserializer(),
                 new JsonDeserializer<>(OperationRequest.class)
+        );
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, BankClient> clientContainerFactory(
+            ConsumerFactory<String, BankClient> clientConsumerFactory
+    ) {
+        ConcurrentKafkaListenerContainerFactory<String, BankClient> factory
+                = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(clientConsumerFactory);
+        return factory;
+    }
+
+    @Bean
+    public ConsumerFactory<String, BankClient> clientConsumerFactory() {
+        Map<String, Object> properties = properties();
+
+        return new DefaultKafkaConsumerFactory<>(
+                properties,
+                new StringDeserializer(),
+                new JsonDeserializer<>(BankClient.class)
         );
     }
 
