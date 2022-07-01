@@ -5,3 +5,4 @@ spring:
 topics:
   deposit: deposits
   withdrawal: withdrawals
+  client: clients
