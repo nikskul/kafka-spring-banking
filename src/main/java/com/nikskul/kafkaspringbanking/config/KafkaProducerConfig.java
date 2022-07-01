@@ -1,5 +1,6 @@
 package com.nikskul.kafkaspringbanking.config;
 
+import com.nikskul.kafkaspringbanking.model.BankClient;
 import com.nikskul.kafkaspringbanking.request.OperationRequest;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -20,14 +21,26 @@ public class KafkaProducerConfig {
     private String bootstrapServer;
 
     @Bean
-    public KafkaTemplate<String, OperationRequest> kafkaDepositTemplate(
+    public KafkaTemplate<String, OperationRequest> clientOperationTemplate(
             ProducerFactory<String, OperationRequest> producerFactory
     ) {
         return new KafkaTemplate<>(producerFactory);
     }
 
     @Bean
-    public ProducerFactory<String, OperationRequest> depositProducerFactory() {
+    public ProducerFactory<String, OperationRequest> operationProducerFactory() {
+        return properties();
+    }
+
+    @Bean
+    public KafkaTemplate<String, BankClient> kafkaDepositTemplate(
+            ProducerFactory<String, BankClient> producerFactory
+    ) {
+        return new KafkaTemplate<>(producerFactory);
+    }
+
+    @Bean
+    public ProducerFactory<String, BankClient> clientProducerFactory() {
         return properties();
     }
 
