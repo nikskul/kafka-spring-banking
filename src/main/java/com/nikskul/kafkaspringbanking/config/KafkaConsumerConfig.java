@@ -22,27 +22,6 @@ public class KafkaConsumerConfig {
     private String bootstrapServer;
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, String> defaultContainerFactory(
-            ConsumerFactory<String, String> depositConsumerFactory
-    ) {
-        ConcurrentKafkaListenerContainerFactory<String, String> factory
-                = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(depositConsumerFactory);
-        return factory;
-    }
-
-    @Bean
-    public ConsumerFactory<String, String> defaultConsumerFactory() {
-        Map<String, Object> properties = properties();
-
-        return new DefaultKafkaConsumerFactory<>(
-                properties,
-                new StringDeserializer(),
-                new StringDeserializer()
-        );
-    }
-
-    @Bean
     public ConcurrentKafkaListenerContainerFactory<String, OperationRequest> clientOperationContainerFactory(
             ConsumerFactory<String, OperationRequest> operationConsumerFactory
     ) {
@@ -54,7 +33,7 @@ public class KafkaConsumerConfig {
 
     @Bean
     public ConsumerFactory<String, OperationRequest> operationConsumerFactory() {
-        Map<String, Object> properties = properties();
+        Map<String, Object> properties = operationProperties();
 
         return new DefaultKafkaConsumerFactory<>(
                 properties,
@@ -75,7 +54,7 @@ public class KafkaConsumerConfig {
 
     @Bean
     public ConsumerFactory<String, BankClient> clientConsumerFactory() {
-        Map<String, Object> properties = properties();
+        Map<String, Object> properties = clientProperties();
 
         return new DefaultKafkaConsumerFactory<>(
                 properties,
@@ -84,13 +63,22 @@ public class KafkaConsumerConfig {
         );
     }
 
-    private Map<String, Object> properties() {
+    private Map<String, Object> operationProperties() {
         Map<String, Object> props = new HashMap<>();
 
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+
+        return props;
+    }
+
+    private Map<String, Object> clientProperties() {
+        Map<String, Object> props = new HashMap<>();
+
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
 
         return props;
     }
