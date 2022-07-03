@@ -1,7 +1,6 @@
 package com.nikskul.kafkaspringbanking.controller;
 
 import com.nikskul.kafkaspringbanking.request.CredentialRequest;
-import com.nikskul.kafkaspringbanking.service.BankClientService;
 import com.nikskul.kafkaspringbanking.service.CalculateBalanceService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
