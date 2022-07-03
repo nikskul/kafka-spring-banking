@@ -3,6 +3,7 @@ package com.nikskul.kafkaspringbanking.service;
 import com.nikskul.kafkaspringbanking.request.OperationRequest;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.PartitionOffset;
+import org.springframework.kafka.annotation.TopicPartition;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -19,10 +20,11 @@ public class CalculateBalanceService {
             id = "calculatorDepositsListener",
             containerFactory = "clientRequestContainerFactory",
             topicPartitions = {
-                    @org.springframework.kafka.annotation.TopicPartition(
+                    @TopicPartition(
                             topic = "${topics.deposit}",
-                            partitionOffsets = @PartitionOffset(partition = "0", initialOffset = "0")
-                    ),
+                            partitions = "0-1000",
+                            partitionOffsets = @PartitionOffset(partition = "*", initialOffset = "0")
+                    )
             }
     )
     private void calculateDeposits(final OperationRequest request) {
@@ -39,9 +41,10 @@ public class CalculateBalanceService {
             id = "calculatorWithdrawalsListener",
             containerFactory = "clientRequestContainerFactory",
             topicPartitions = {
-                    @org.springframework.kafka.annotation.TopicPartition(
+                    @TopicPartition(
                             topic = "${topics.withdrawal}",
-                            partitionOffsets = @PartitionOffset(partition = "0", initialOffset = "0")
+                            partitions = "0-1000",
+                            partitionOffsets = @PartitionOffset(partition = "*", initialOffset = "0")
                     ),
             }
     )

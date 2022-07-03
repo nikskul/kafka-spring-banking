@@ -21,27 +21,6 @@ public class KafkaConsumerConfig {
     private String bootstrapServer;
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, String> defaultContainerFactory(
-            ConsumerFactory<String, String> depositConsumerFactory
-    ) {
-        ConcurrentKafkaListenerContainerFactory<String, String> factory
-                = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(depositConsumerFactory);
-        return factory;
-    }
-
-    @Bean
-    public ConsumerFactory<String, String> defaultConsumerFactory() {
-        Map<String, Object> properties = properties();
-
-        return new DefaultKafkaConsumerFactory<>(
-                properties,
-                new StringDeserializer(),
-                new StringDeserializer()
-        );
-    }
-
-    @Bean
     public ConcurrentKafkaListenerContainerFactory<String, OperationRequest> clientRequestContainerFactory(
             ConsumerFactory<String, OperationRequest> operationConsumerFactory
     ) {
