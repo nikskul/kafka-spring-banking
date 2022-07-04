@@ -6,3 +6,5 @@ topics:
   deposit: deposits
   withdrawal: withdrawals
   client: clients
+  test:
+    client: client-test-topic

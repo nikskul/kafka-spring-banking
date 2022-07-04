@@ -39,7 +39,7 @@ public class BankClientService {
         clientTemplate.flush();
     }
 
-    public void validateBeforeRegister(BankClient client) {
+    private void validateBeforeRegister(BankClient client) {
         if (clientMap.containsKey(client.getUsername()))
             throw new BadRequestException("Username already exist.");
     }
