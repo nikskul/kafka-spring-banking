@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.springframework.kafka.test.hamcrest.KafkaMatchers.hasKey;
+import static org.springframework.kafka.test.hamcrest.KafkaMatchers.hasValue;
 
 @SpringBootTest
 @EmbeddedKafka(
@@ -103,14 +105,8 @@ class BankClientServiceTest {
         var receive = records.poll(10, TimeUnit.SECONDS);
 
         assertThat(receive, hasKey(client.getUsername()));
+        assertThat(receive, hasValue(client));
 
         container.stop();
     }
-
-    @Test
-    @DirtiesContext
-    void testFindAll() {
-        Assertions.assertTrue(service.findAll().size() >= 0);
-    }
-
 }

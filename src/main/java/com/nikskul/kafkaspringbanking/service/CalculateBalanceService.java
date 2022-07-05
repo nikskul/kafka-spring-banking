@@ -37,7 +37,7 @@ public class CalculateBalanceService {
                     )
             )
     )
-    public void registerNewAccountBalance(BankClient client) {
+    private void registerNewAccountBalance(BankClient client) {
         if (!clientBalances.containsKey(client.getUsername()))
             clientBalances.put(client.getUsername(), BigDecimal.ZERO);
     }
