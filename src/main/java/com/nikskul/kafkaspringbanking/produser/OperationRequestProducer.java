@@ -6,8 +6,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 @Component
-public class OperationRequestProducer implements KafkaProducer<OperationRequest> {
+public class OperationRequestProducer implements KafkaSender<OperationRequest> {
 
     private final Logger log = LoggerFactory.getLogger(OperationRequestProducer.class);
 
@@ -25,6 +27,8 @@ public class OperationRequestProducer implements KafkaProducer<OperationRequest>
             final OperationRequest data
     ) {
 
+        validateRequest(data);
+
         String key = data.getClientName();
 
         var sendResult = kafkaTemplate.send(topic, key, data);
@@ -32,13 +36,20 @@ public class OperationRequestProducer implements KafkaProducer<OperationRequest>
         sendResult.addCallback(
                 result -> {
                     assert result != null;
-                    log.info("Success sent data: " + result.getProducerRecord().value()
-                             + "\nTopic: " + topic);
+                    log.info("Topic: " + topic + ". " +
+                             "Success sent data: " + result.getProducerRecord().value());
                 },
                 error -> log.warn("Can't send to kafka: " + error.getMessage())
         );
 
         kafkaTemplate.flush();
+    }
+
+    private void validateRequest(final OperationRequest request) {
+
+        if (request.getValue().compareTo(BigDecimal.ZERO) < 0)
+            throw new RuntimeException("Operation value must be positive");
+
     }
 
 }

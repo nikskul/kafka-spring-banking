@@ -1,6 +1,6 @@
 package com.nikskul.kafkaspringbanking.controller;
 
-import com.nikskul.kafkaspringbanking.produser.KafkaProducer;
+import com.nikskul.kafkaspringbanking.produser.KafkaSender;
 import com.nikskul.kafkaspringbanking.produser.OperationRequestProducer;
 import com.nikskul.kafkaspringbanking.request.OperationRequest;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +15,7 @@ public class WithdrawalController {
 
     private final String withdrawalTopic;
 
-    private final KafkaProducer<OperationRequest> producer;
+    private final KafkaSender<OperationRequest> producer;
 
     public WithdrawalController(
             @Value("${topics.withdrawal}") String withdrawalTopic,

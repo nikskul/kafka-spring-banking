@@ -1,6 +1,6 @@
 package com.nikskul.kafkaspringbanking.controller;
 
-import com.nikskul.kafkaspringbanking.produser.KafkaProducer;
+import com.nikskul.kafkaspringbanking.produser.KafkaSender;
 import com.nikskul.kafkaspringbanking.produser.OperationRequestProducer;
 import com.nikskul.kafkaspringbanking.request.OperationRequest;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/v1/deposits")
 public class DepositController {
 
-    private final KafkaProducer<OperationRequest> producer;
+    private final KafkaSender<OperationRequest> producer;
 
     private final String depositTopic;
 

@@ -1,6 +1,6 @@
 package com.nikskul.kafkaspringbanking.produser;
 
-public interface KafkaProducer<T> {
+public interface KafkaSender<T> {
 
     void sendToKafka(String topic, T data);
 
