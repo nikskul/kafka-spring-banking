@@ -1,5 +1,7 @@
 package com.nikskul.kafkaspringbanking.controller;
 
+import com.nikskul.kafkaspringbanking.produser.KafkaProducer;
+import com.nikskul.kafkaspringbanking.produser.OperationRequestProducer;
 import com.nikskul.kafkaspringbanking.request.OperationRequest;
 import com.nikskul.kafkaspringbanking.service.KafkaBalanceServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,18 +16,18 @@ public class WithdrawalController {
 
     private final String withdrawalTopic;
 
-    private final KafkaBalanceServiceImpl balanceService;
+    private final KafkaProducer<OperationRequest> producer;
 
     public WithdrawalController(
             @Value("${topics.withdrawal}") String withdrawalTopic,
-            KafkaBalanceServiceImpl balanceService
+            OperationRequestProducer producer
     ) {
         this.withdrawalTopic = withdrawalTopic;
-        this.balanceService = balanceService;
+        this.producer = producer;
     }
 
     @PostMapping
     public void makeWithdrawal(@RequestBody final OperationRequest request) {
-        balanceService.sendToKafka(withdrawalTopic, request);
+        producer.sendToKafka(withdrawalTopic, request);
     }
 }
