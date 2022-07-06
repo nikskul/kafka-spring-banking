@@ -67,9 +67,7 @@ public class KafkaBalanceServiceImpl implements BalanceService {
                     log.info("Success sent data: " + result.getProducerRecord().value()
                              + "\nTopic: " + topic);
                 },
-                error -> {
-                    log.warn("Can't send to kafka: " + error.getMessage());
-                }
+                error -> log.warn("Can't send to kafka: " + error.getMessage())
         );
 
         kafkaTemplate.flush();

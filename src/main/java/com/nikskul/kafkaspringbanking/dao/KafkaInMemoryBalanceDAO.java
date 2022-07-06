@@ -1,6 +1,5 @@
 package com.nikskul.kafkaspringbanking.dao;
 
-import com.nikskul.kafkaspringbanking.request.OperationRequest;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;

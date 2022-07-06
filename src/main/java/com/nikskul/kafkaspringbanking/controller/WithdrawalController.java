@@ -1,7 +1,6 @@
 package com.nikskul.kafkaspringbanking.controller;
 
 import com.nikskul.kafkaspringbanking.request.OperationRequest;
-import com.nikskul.kafkaspringbanking.service.BalanceService;
 import com.nikskul.kafkaspringbanking.service.KafkaBalanceServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;

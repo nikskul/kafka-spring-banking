@@ -1,7 +1,6 @@
 package com.nikskul.kafkaspringbanking.listener;
 
 import com.nikskul.kafkaspringbanking.request.OperationRequest;
-import com.nikskul.kafkaspringbanking.service.BalanceService;
 import com.nikskul.kafkaspringbanking.service.KafkaBalanceServiceImpl;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.PartitionOffset;
