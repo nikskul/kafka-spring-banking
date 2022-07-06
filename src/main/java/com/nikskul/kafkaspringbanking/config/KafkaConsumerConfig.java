@@ -21,7 +21,7 @@ public class KafkaConsumerConfig {
     private String bootstrapServer;
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, OperationRequest> clientRequestContainerFactory(
+    public ConcurrentKafkaListenerContainerFactory<String, OperationRequest> operationRequestListenerContainerFactory(
             ConsumerFactory<String, OperationRequest> operationConsumerFactory
     ) {
         ConcurrentKafkaListenerContainerFactory<String, OperationRequest> factory

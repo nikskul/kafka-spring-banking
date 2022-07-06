@@ -1,12 +1,8 @@
 package com.nikskul.kafkaspringbanking.controller;
 
 import com.nikskul.kafkaspringbanking.request.OperationRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.nikskul.kafkaspringbanking.service.KafkaBalanceServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
-import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,21 +12,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/v1/deposits")
 public class DepositController {
 
-    private final String topic;
+    private final KafkaBalanceServiceImpl balanceService;
 
-    private final KafkaTemplate<String, OperationRequest> kafkaTemplate;
+    private final String depositTopic;
 
     public DepositController(
-            @Value("${topics.deposit}") String topic,
-            KafkaTemplate<String, OperationRequest> kafkaTemplate
+            @Value("${topics.deposit}") String depositTopic,
+            KafkaBalanceServiceImpl balanceService
     ) {
-        this.topic = topic;
-        this.kafkaTemplate = kafkaTemplate;
+        this.balanceService = balanceService;
+        this.depositTopic = depositTopic;
     }
 
     @PostMapping
     public void makeDeposit(@RequestBody final OperationRequest request) {
-        String key = request.getClientName();
-        kafkaTemplate.send(topic, key, request);
+        balanceService.sendToKafka(depositTopic, request);
     }
 }

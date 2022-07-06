@@ -3,10 +3,12 @@ package com.nikskul.kafkaspringbanking.request;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
 @Data
+@ToString
 public final class OperationRequest {
     @JsonProperty("clientName")
     private final String clientName;
