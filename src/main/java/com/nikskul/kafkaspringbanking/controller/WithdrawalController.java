@@ -3,7 +3,6 @@ package com.nikskul.kafkaspringbanking.controller;
 import com.nikskul.kafkaspringbanking.produser.KafkaProducer;
 import com.nikskul.kafkaspringbanking.produser.OperationRequestProducer;
 import com.nikskul.kafkaspringbanking.request.OperationRequest;
-import com.nikskul.kafkaspringbanking.service.KafkaBalanceServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

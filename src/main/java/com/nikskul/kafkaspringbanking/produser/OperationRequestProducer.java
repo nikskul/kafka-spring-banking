@@ -1,6 +1,5 @@
 package com.nikskul.kafkaspringbanking.produser;
 
-import com.nikskul.kafkaspringbanking.consumer.OperationRequestConsumer;
 import com.nikskul.kafkaspringbanking.request.OperationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

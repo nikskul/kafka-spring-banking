@@ -2,14 +2,10 @@ package com.nikskul.kafkaspringbanking.consumer;
 
 import com.nikskul.kafkaspringbanking.dao.KafkaInMemoryBalanceDAO;
 import com.nikskul.kafkaspringbanking.request.OperationRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.PartitionOffset;
 import org.springframework.kafka.annotation.TopicPartition;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
