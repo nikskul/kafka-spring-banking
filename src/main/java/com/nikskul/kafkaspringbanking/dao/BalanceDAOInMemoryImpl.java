@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Component
-public class KafkaInMemoryBalanceDAO implements BalanceDAO<String, BigDecimal> {
+public class BalanceDAOInMemoryImpl implements BalanceDAO<String, BigDecimal> {
 
     Map<String, BigDecimal> balances = new HashMap<>();
 

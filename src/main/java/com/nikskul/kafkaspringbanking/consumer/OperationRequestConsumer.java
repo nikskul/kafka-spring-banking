@@ -1,6 +1,6 @@
 package com.nikskul.kafkaspringbanking.consumer;
 
-import com.nikskul.kafkaspringbanking.dao.KafkaInMemoryBalanceDAO;
+import com.nikskul.kafkaspringbanking.dao.BalanceDAOInMemoryImpl;
 import com.nikskul.kafkaspringbanking.request.OperationRequest;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.PartitionOffset;
@@ -12,10 +12,10 @@ import java.math.BigDecimal;
 @Component
 public class OperationRequestConsumer {
 
-    private final KafkaInMemoryBalanceDAO balanceDAO;
+    private final BalanceDAOInMemoryImpl balanceDAO;
 
     public OperationRequestConsumer(
-            KafkaInMemoryBalanceDAO balanceDAO
+            BalanceDAOInMemoryImpl balanceDAO
     ) {
         this.balanceDAO = balanceDAO;
     }
@@ -32,6 +32,9 @@ public class OperationRequestConsumer {
             }
     )
     private void makeDeposit(final OperationRequest request) {
+
+        validateRequest(request);
+
         String key = request.getClientName();
         BigDecimal value = request.getValue();
 
@@ -53,6 +56,9 @@ public class OperationRequestConsumer {
             }
     )
     private void makeWithdrawal(final OperationRequest request) {
+
+        validateRequest(request);
+
         String key = request.getClientName();
         BigDecimal value = request.getValue();
 
@@ -60,6 +66,13 @@ public class OperationRequestConsumer {
                 .orElse(BigDecimal.ZERO);
 
         balanceDAO.save(key, currentBalance.subtract(value));
+    }
+
+    private void validateRequest(final OperationRequest request) {
+
+        if (request.getValue().compareTo(BigDecimal.ZERO) < 0)
+            throw new RuntimeException("Operation value must be positive");
+
     }
 
 }

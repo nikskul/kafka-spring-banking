@@ -1,17 +1,17 @@
 package com.nikskul.kafkaspringbanking.service;
 
-import com.nikskul.kafkaspringbanking.dao.KafkaInMemoryBalanceDAO;
+import com.nikskul.kafkaspringbanking.dao.BalanceDAOInMemoryImpl;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
 @Service
-public class KafkaBalanceServiceImpl implements BalanceService {
+public class BalanceServiceImpl implements BalanceService {
 
-    private final KafkaInMemoryBalanceDAO balanceDAO;
+    private final BalanceDAOInMemoryImpl balanceDAO;
 
-    public KafkaBalanceServiceImpl(
-            KafkaInMemoryBalanceDAO balanceDAO
+    public BalanceServiceImpl(
+            BalanceDAOInMemoryImpl balanceDAO
     ) {
         this.balanceDAO = balanceDAO;
     }

@@ -1,6 +1,6 @@
 package com.nikskul.kafkaspringbanking.controller;
 
-import com.nikskul.kafkaspringbanking.service.KafkaBalanceServiceImpl;
+import com.nikskul.kafkaspringbanking.service.BalanceServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,9 +13,9 @@ import java.math.BigDecimal;
 @RequestMapping("api/v1/balances")
 public class BalanceController {
 
-    private final KafkaBalanceServiceImpl balanceService;
+    private final BalanceServiceImpl balanceService;
 
-    public BalanceController(KafkaBalanceServiceImpl balanceServiceImpl) {
+    public BalanceController(BalanceServiceImpl balanceServiceImpl) {
         this.balanceService = balanceServiceImpl;
     }
 
