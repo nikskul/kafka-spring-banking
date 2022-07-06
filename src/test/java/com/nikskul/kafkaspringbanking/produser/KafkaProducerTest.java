@@ -105,7 +105,7 @@ class KafkaProducerTest {
 
         assertThrows(RuntimeException.class, () -> producer.sendToKafka(topic, request));
 
-        var received = records.poll(10, TimeUnit.SECONDS);
+        var received = records.poll();
 
         assertNull(received);
 
