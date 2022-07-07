@@ -35,6 +35,7 @@ class DepositControllerTest {
 
         OperationRequest request = new OperationRequest(
                 "testSuccess",
+                "test",
                 BigDecimal.TEN
         );
 

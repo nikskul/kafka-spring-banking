@@ -1,6 +1,6 @@
 package com.nikskul.kafkaspringbanking.controller;
 
-import com.nikskul.kafkaspringbanking.service.BalanceServiceImpl;
+import com.nikskul.kafkaspringbanking.service.balance.SimpleBalanceService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -28,11 +28,11 @@ class BalanceControllerTest {
     MockMvc mockMvc;
 
     @MockBean
-    BalanceServiceImpl service;
+    SimpleBalanceService service;
 
     @Test
     void testGetBalanceZero() throws Exception {
-        Mockito.when(service.findBalanceById("testZero")).thenReturn(BigDecimal.ZERO);
+        Mockito.when(service.getBalance("testZero")).thenReturn(BigDecimal.ZERO);
 
         MvcResult result
                 = mockMvc.perform(MockMvcRequestBuilders.get(API_ENDPOINT + "/testZero")

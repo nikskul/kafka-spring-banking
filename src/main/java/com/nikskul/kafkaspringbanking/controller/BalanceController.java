@@ -1,28 +1,41 @@
 package com.nikskul.kafkaspringbanking.controller;
 
-import com.nikskul.kafkaspringbanking.service.BalanceServiceImpl;
+import com.nikskul.kafkaspringbanking.model.User;
+import com.nikskul.kafkaspringbanking.request.CredentialsRequest;
+import com.nikskul.kafkaspringbanking.service.UserService;
+import com.nikskul.kafkaspringbanking.service.balance.UserBankAccountBalanceService;
+import com.nikskul.kafkaspringbanking.service.user.SimpleUserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 
 @RestController
-@RequestMapping("api/v1/balances")
+@RequestMapping("api/v1/public/balances")
 public class BalanceController {
 
-    private final BalanceServiceImpl balanceService;
+    private final SimpleUserService userService;
 
-    public BalanceController(BalanceServiceImpl balanceServiceImpl) {
-        this.balanceService = balanceServiceImpl;
+    private final UserBankAccountBalanceService balanceService;
+
+    public BalanceController(
+            UserBankAccountBalanceService balanceService,
+            SimpleUserService userService
+    ) {
+        this.balanceService = balanceService;
+        this.userService = userService;
     }
 
-    @GetMapping("{name}")
-    public ResponseEntity<BigDecimal> getBalance(@PathVariable("name") String clientName) {
+    @PostMapping
+    public ResponseEntity<BigDecimal> getBalance(
+            @RequestBody final CredentialsRequest request
+    ) {
 
-        BigDecimal balance = balanceService.findBalanceById(clientName);
+        userService.authenticate(request);
+
+        var user = userService.getByUsername(request.username());
+
+        BigDecimal balance = balanceService.getBalance(user);
 
         return ResponseEntity.ok(balance);
     }

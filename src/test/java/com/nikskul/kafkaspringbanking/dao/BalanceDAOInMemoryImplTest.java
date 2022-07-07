@@ -10,12 +10,12 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = BalanceDAOInMemoryImpl.class)
+@SpringBootTest(classes = InMemoryBalanceDAO.class)
 @DirtiesContext
 class BalanceDAOInMemoryImplTest {
 
     @Autowired
-    BalanceDAOInMemoryImpl dao;
+    InMemoryBalanceDAO dao;
 
     @Test
     void shouldSave() {
@@ -51,8 +51,4 @@ class BalanceDAOInMemoryImplTest {
 
     }
 
-    @Test
-    void shouldReturnNotNullMap() {
-        assertNotNull(dao.getAll());
-    }
 }

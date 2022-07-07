@@ -35,6 +35,7 @@ class WithdrawalControllerTest {
 
         OperationRequest request = new OperationRequest(
                 "testSuccess",
+                "test",
                 BigDecimal.TEN
         );
 

@@ -25,4 +25,12 @@ public class KafkaTopicConfig {
                 .build();
     }
 
+    @Bean
+    public NewTopic bankClientsTopic(
+            @Value("${topics.client}") String bankClientsTopic
+    ) {
+        return TopicBuilder.name(bankClientsTopic)
+                .compact()
+                .build();
+    }
 }

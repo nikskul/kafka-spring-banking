@@ -1,6 +1,7 @@
 package com.nikskul.kafkaspringbanking.service;
 
-import com.nikskul.kafkaspringbanking.dao.BalanceDAOInMemoryImpl;
+import com.nikskul.kafkaspringbanking.dao.InMemoryBalanceDAO;
+import com.nikskul.kafkaspringbanking.service.balance.SimpleBalanceService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,10 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class BalanceServiceTest {
 
     @Mock
-    BalanceDAOInMemoryImpl dao;
+    InMemoryBalanceDAO dao;
 
     @InjectMocks
-    BalanceServiceImpl service;
+    SimpleBalanceService service;
 
     @Test
     void shouldReturnValue() {
@@ -29,7 +30,7 @@ class BalanceServiceTest {
 
         Mockito.when(dao.getByKey(key)).thenReturn(Optional.of(expected));
 
-        var balance = service.findBalanceById(key);
+        var balance = service.getBalance(key);
 
         assertEquals(expected, balance);
     }
@@ -41,7 +42,7 @@ class BalanceServiceTest {
 
         Mockito.when(dao.getByKey(key)).thenReturn(Optional.empty());
 
-        var balance = service.findBalanceById(key);
+        var balance = service.getBalance(key);
 
         assertEquals(expected, balance);
     }

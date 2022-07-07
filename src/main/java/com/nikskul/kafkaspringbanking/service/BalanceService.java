@@ -2,8 +2,8 @@ package com.nikskul.kafkaspringbanking.service;
 
 import java.math.BigDecimal;
 
-public interface BalanceService {
+public interface BalanceService<K> {
 
-    BigDecimal findBalanceById(String id);
+    BigDecimal getBalance(K key);
 
 }

@@ -1,9 +1,16 @@
 package com.nikskul.kafkaspringbanking.produser;
 
+import com.nikskul.kafkaspringbanking.request.CredentialsRequest;
 import com.nikskul.kafkaspringbanking.request.OperationRequest;
+import com.nikskul.kafkaspringbanking.service.user.SimpleUserService;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.core.ConsumerFactory;
@@ -25,10 +32,13 @@ import java.util.concurrent.TimeUnit;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.kafka.test.hamcrest.KafkaMatchers.hasKey;
 import static org.springframework.kafka.test.hamcrest.KafkaMatchers.hasValue;
 
 @SpringBootTest
+@ExtendWith(MockitoExtension.class)
 @DirtiesContext
 @EmbeddedKafka(
         brokerProperties = {
@@ -42,7 +52,11 @@ class KafkaProducerTest {
 
     private final String topic = "operation-producer-test-topic";
 
+    @Mock
+    SimpleUserService userService;
+
     @Autowired
+    @InjectMocks
     OperationRequestProducer producer;
 
     final BlockingQueue<ConsumerRecord<String, OperationRequest>> records = new LinkedBlockingQueue<>();
@@ -70,21 +84,29 @@ class KafkaProducerTest {
     @Test
     void shouldSendToKafkaSuccess() throws InterruptedException {
 
+        var request = new OperationRequest(
+                "valid",
+                "test",
+                BigDecimal.TEN
+        );
+
+        doNothing().when(userService).authenticate(
+                        new CredentialsRequest(
+                                request.getUsername(),
+                                request.getPassword()
+                        )
+                );
+
         var container = getRequestContainer();
 
         container.start();
         ContainerTestUtils.waitForAssignment(container, 1);
 
-        var request = new OperationRequest(
-                "test",
-                BigDecimal.TEN
-        );
-
         producer.sendToKafka(topic, request);
 
         var received = records.poll(10, TimeUnit.SECONDS);
 
-        assertThat(received, hasKey(request.getClientName()));
+        assertThat(received, hasKey(request.getUsername()));
         assertThat(received, hasValue(request));
 
         container.stop();
@@ -93,15 +115,23 @@ class KafkaProducerTest {
     @Test
     void shouldThrowExceptionWhenSendNegativeValue() throws InterruptedException {
 
+        var request = new OperationRequest(
+                "notValid",
+                "test",
+                BigDecimal.TEN.negate()
+        );
+
+        doThrow(new RuntimeException("Can't authenticate")).when(userService).authenticate(
+                new CredentialsRequest(
+                        request.getUsername(),
+                        request.getPassword()
+                )
+        );
+
         var container = getRequestContainer();
 
         container.start();
         ContainerTestUtils.waitForAssignment(container, 1);
-
-        var request = new OperationRequest(
-                "test",
-                BigDecimal.TEN.negate()
-        );
 
         assertThrows(RuntimeException.class, () -> producer.sendToKafka(topic, request));
 

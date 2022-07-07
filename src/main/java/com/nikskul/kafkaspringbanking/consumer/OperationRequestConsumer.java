@@ -1,7 +1,9 @@
 package com.nikskul.kafkaspringbanking.consumer;
 
-import com.nikskul.kafkaspringbanking.dao.BalanceDAOInMemoryImpl;
+import com.nikskul.kafkaspringbanking.dao.InMemoryBankAccountDAO;
+import com.nikskul.kafkaspringbanking.model.BankAccount;
 import com.nikskul.kafkaspringbanking.request.OperationRequest;
+import com.nikskul.kafkaspringbanking.service.user.SimpleUserService;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.PartitionOffset;
 import org.springframework.kafka.annotation.TopicPartition;
@@ -12,12 +14,15 @@ import java.math.BigDecimal;
 @Component
 public class OperationRequestConsumer {
 
-    private final BalanceDAOInMemoryImpl balanceDAO;
+    private final SimpleUserService userService;
+    private final InMemoryBankAccountDAO bankAccountDAO;
 
     public OperationRequestConsumer(
-            BalanceDAOInMemoryImpl balanceDAO
+            SimpleUserService userService,
+            InMemoryBankAccountDAO bankAccountDAO
     ) {
-        this.balanceDAO = balanceDAO;
+        this.userService = userService;
+        this.bankAccountDAO = bankAccountDAO;
     }
 
     @KafkaListener(
@@ -35,13 +40,18 @@ public class OperationRequestConsumer {
 
         validateRequest(request);
 
-        String key = request.getClientName();
-        BigDecimal value = request.getValue();
+        String username = request.getUsername();
+        BigDecimal deposit = request.getValue();
 
-        var currentBalance = balanceDAO.getByKey(key)
-                .orElse(BigDecimal.ZERO);
+        var bankAccount = getBankAccount(username);
 
-        balanceDAO.save(key, currentBalance.add(value));
+        var currentBalance = bankAccount.getBalance();
+
+        var newBalance = currentBalance.add(deposit);
+
+        bankAccount.setBalance(newBalance);
+
+        bankAccountDAO.save(bankAccount.getId(), bankAccount);
     }
 
     @KafkaListener(
@@ -59,13 +69,30 @@ public class OperationRequestConsumer {
 
         validateRequest(request);
 
-        String key = request.getClientName();
-        BigDecimal value = request.getValue();
+        String username = request.getUsername();
+        BigDecimal withdrawal = request.getValue();
 
-        var currentBalance = balanceDAO.getByKey(key)
-                .orElse(BigDecimal.ZERO);
+        var bankAccount = getBankAccount(username);
 
-        balanceDAO.save(key, currentBalance.subtract(value));
+        var currentBalance = bankAccount.getBalance();
+
+        var newBalance = currentBalance.subtract(withdrawal);
+
+        bankAccount.setBalance(newBalance);
+
+        bankAccountDAO.save(bankAccount.getId(), bankAccount);
+    }
+
+    private BankAccount getBankAccount(String username) {
+        var accountOwner = userService.getByUsername(username);
+
+        return bankAccountDAO.getByOwnerId(accountOwner.getId())
+                .orElseThrow(
+                        () -> new RuntimeException(
+                                "Can't make deposit for not existing account by owner: "
+                                + accountOwner.getUsername()
+                        )
+                );
     }
 
     private void validateRequest(final OperationRequest request) {

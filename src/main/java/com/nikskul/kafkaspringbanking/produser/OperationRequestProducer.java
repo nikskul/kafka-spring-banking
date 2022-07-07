@@ -1,6 +1,8 @@
 package com.nikskul.kafkaspringbanking.produser;
 
+import com.nikskul.kafkaspringbanking.request.CredentialsRequest;
 import com.nikskul.kafkaspringbanking.request.OperationRequest;
+import com.nikskul.kafkaspringbanking.service.user.SimpleUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -13,11 +15,15 @@ public class OperationRequestProducer implements KafkaSender<OperationRequest> {
 
     private final Logger log = LoggerFactory.getLogger(OperationRequestProducer.class);
 
+    private final SimpleUserService userService;
+
     private final KafkaTemplate<String, OperationRequest> kafkaTemplate;
 
     public OperationRequestProducer(
+            SimpleUserService simpleUserService,
             KafkaTemplate<String, OperationRequest> kafkaTemplate
     ) {
+        this.userService = simpleUserService;
         this.kafkaTemplate = kafkaTemplate;
     }
 
@@ -29,7 +35,7 @@ public class OperationRequestProducer implements KafkaSender<OperationRequest> {
 
         validateRequest(data);
 
-        String key = data.getClientName();
+        String key = data.getUsername();
 
         var sendResult = kafkaTemplate.send(topic, key, data);
 
@@ -46,6 +52,13 @@ public class OperationRequestProducer implements KafkaSender<OperationRequest> {
     }
 
     private void validateRequest(final OperationRequest request) {
+
+        userService.authenticate(
+                new CredentialsRequest(
+                        request.getUsername(),
+                        request.getPassword()
+                )
+        );
 
         if (request.getValue().compareTo(BigDecimal.ZERO) < 0)
             throw new RuntimeException("Operation value must be positive");
