@@ -6,7 +6,6 @@ import com.nikskul.kafkaspringbanking.model.BankAccount;
 import com.nikskul.kafkaspringbanking.model.User;
 import com.nikskul.kafkaspringbanking.request.CredentialsRequest;
 import com.nikskul.kafkaspringbanking.service.UserService;
-import com.nikskul.kafkaspringbanking.service.balance.UserBankAccountBalanceService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

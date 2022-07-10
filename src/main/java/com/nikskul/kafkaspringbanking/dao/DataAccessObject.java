@@ -1,6 +1,5 @@
 package com.nikskul.kafkaspringbanking.dao;
 
-import java.util.Map;
 import java.util.Optional;
 
 public interface DataAccessObject<ID, T> {

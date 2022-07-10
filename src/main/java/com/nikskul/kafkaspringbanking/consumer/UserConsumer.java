@@ -5,7 +5,13 @@ import com.nikskul.kafkaspringbanking.service.user.SimpleUserService;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.PartitionOffset;
 import org.springframework.kafka.annotation.TopicPartition;
+import org.springframework.stereotype.Component;
 
+/**
+ * Listen kafka user topic.
+ * Call service for save users
+ */
+@Component
 public class UserConsumer {
 
     private final SimpleUserService userService;

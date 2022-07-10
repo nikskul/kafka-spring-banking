@@ -11,6 +11,10 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
+/**
+ * Listen kafka deposit and withdrawal topics.
+ * Call service for change balance
+ */
 @Component
 public class OperationRequestConsumer {
 
